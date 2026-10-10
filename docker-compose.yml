@@ -1,0 +1,19 @@
+services:
+  goshorty:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      HTTP_ADDR: ":8080"
+      # 只在 Compose 网络内给 Prometheus 抓取，不映射到宿主机。
+      METRICS_ADDR: "0.0.0.0:6060"
+      PUBLIC_BASE_URL: "http://localhost:8080"
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    depends_on:
+      - goshorty
+    volumes:
+      - ./prometheus.compose.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:9090:9090"

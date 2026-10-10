@@ -27,10 +27,14 @@ func init() {
 	})
 	prometheus.MustRegister(VisitCounter)
 	prometheus.MustRegister(LimitedCounter)
-	http.Handle("/metrics", promhttp.Handler()) // 注册 prometheus 的 handler
+	http.Handle("/metrics", promhttp.Handler()) // 注册到 DefaultServeMux，仅由 Start 监听
+}
+
+// Start 在 addr 上提供 pprof 与 /metrics。调用方应使用独立 Mux 提供对外 HTTP。
+func Start(addr string) {
 	go func() {
-		log.Println("[pprof] running at http://localhost:6060/debug/pprof/")
-		log.Println("[metrics] running at http://localhost:6060/metrics") // 启动 prometheus 的 http 服务
-		log.Println(http.ListenAndServe("localhost:6060", nil))
+		log.Printf("[pprof] http://%s/debug/pprof/", addr)
+		log.Printf("[metrics] http://%s/metrics", addr)
+		log.Println(http.ListenAndServe(addr, nil))
 	}()
 }

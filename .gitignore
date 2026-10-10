@@ -13,8 +13,11 @@
 # Logs
 *.log
 
-# Dependency files
-go.sum
+# Local config (copy from .env.example). Never commit real secrets.
+.env
+
+# Binary from `make build`
+/goshorty
 
 # Output
 links.csv
