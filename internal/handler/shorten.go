@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"goshor/internal/config"
 	"goshor/internal/core"
 	"goshor/internal/util"
 )
@@ -30,6 +31,6 @@ func ShortenHandler(w http.ResponseWriter, r *http.Request) {
 
 	util.AsyncLog(fmt.Sprintf("[NEW] %s => %s", key, url))
 
-	resp := map[string]string{"short": fmt.Sprintf("http://localhost:8080/%s", key)}
+	resp := map[string]string{"short": fmt.Sprintf("%s/%s", config.Current().PublicBaseURL, key)}
 	_ = json.NewEncoder(w).Encode(resp)
 }

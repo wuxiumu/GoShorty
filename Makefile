@@ -1,9 +1,8 @@
 APP_NAME=goshorty
 PKG=./cmd/main.go
 PORT=8080
-PPORT=6060
 
-.PHONY: all run build clean docker docker-run lint test
+.PHONY: all run build clean docker docker-run compose lint test
 
 all: build
 
@@ -23,9 +22,16 @@ clean:
 docker:
 	docker build -t $(APP_NAME):latest .
 
-## 🐳 启动容器（含 pprometheus + pprof 暴露）
+## 🐳 启动容器。指标默认在容器内 127.0.0.1:6060，不映射到宿主机。
 docker-run:
-	docker run -p $(PORT):8080 -p $(PPORT):6060 $(APP_NAME):latest
+	docker run --rm -p $(PORT):8080 \
+		-e HTTP_ADDR=:8080 \
+		-e PUBLIC_BASE_URL=http://localhost:$(PORT) \
+		$(APP_NAME):latest
+
+## 🐳 应用与 Prometheus（6060 仅在 compose 网络内）
+compose:
+	docker compose up --build
 
 ## 🔍 静态代码检查
 lint:

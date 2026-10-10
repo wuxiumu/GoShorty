@@ -2,6 +2,8 @@
 
 🎯 一个用于演示 Golang 高级特性（Goroutine、Channel、pprof、泛型、反射等）的高并发短链接跳转服务。
 
+本仓库是教学模板，适合私有环境演示和按项目二次开发，不是公网短链产品：数据只在进程内存中，重启即丢失；`/api/shorten` 没有鉴权，并且会把任意地址 302 出去；短码来自时间戳，只用于演示。pprof 与 `/metrics` 默认只监听 `127.0.0.1:6060`。
+
 ---
 
 ## 🚀 功能特性
@@ -19,11 +21,45 @@
 
 ## 📦 本地运行
 
+入口是 `./cmd/main.go`（`Makefile` 的 `make run` 相同）。根目录的 `mvp.go` 是单文件课堂对照，不读环境变量，端口写死为 `:8080`。
+
+私有部署前把 `.env.example` 复制为 `.env`。示例里没有密钥；服务也不读取数据库密码或 API Key。已导出的环境变量优先于 `.env`。
+
 ```bash
+cp .env.example .env
 go mod tidy
 go run ./cmd/main.go
-
 ```
+
+默认 HTTP 为 `:8080`，pprof 与 Prometheus 为 `127.0.0.1:6060`。把下面的 `<short_key>` 换成缩短接口返回的短码。
+
+```bash
+curl -X POST http://localhost:8080/api/shorten -d "url=https://golang.org"
+curl -I http://localhost:8080/<short_key>
+curl http://localhost:8080/api/stats/<short_key>
+curl -s http://127.0.0.1:6060/metrics
+```
+
+单文件演示：
+
+```bash
+go run mvp.go
+```
+
+Docker（镜像内指标仍只绑回环地址，不发布 6060）：
+
+```bash
+docker build -t goshorty:latest .
+docker run --rm -p 8080:8080 goshorty:latest
+```
+
+应用和 Prometheus 一起跑时，6060 只在 Compose 网络内，Prometheus UI 绑在 `127.0.0.1:9090`：
+
+```bash
+docker compose up --build
+```
+
+也可以用 `make test`、`make build`、`make docker`、`make docker-run`、`make compose`。
 
 好的，以下是对这个项目 **《Golang 高级编程实战模板工程》** 的整体结构与功能模块进行的**重新梳理**，便于你总结、复用、打磨成长期可维护的架构学习工程：
 
@@ -87,7 +123,7 @@ go run ./cmd/main.go
 | -------------- | ---------------------------------- | ------------------------------ |
 | Goroutine 调度 | 每次跳转为独立协程                 | 使用 pprof 查看数量与堆栈      |
 | Channel 通信   | 日志异步处理 / 限流控制            | 滥用可导致堵塞，合理使用有缓冲 |
-| 逃逸分析       | &Link{}、map[string]*Link          | go run -gcflags="-m" main.go   |
+| 逃逸分析       | &Link{}、map[string]*Link          | go build -gcflags="-m" -o /dev/null ./cmd/main.go |
 | 内存对齐       | Link 字段排序                      | 使用 unsafe.Sizeof()           |
 | 泛型函数       | MapReduce[T, R]                    | 自定义类型运行聚合             |
 | 反射操作       | exportCSV() 动态字段访问           | 输出 CSV 内容可见字段值        |
@@ -186,22 +222,26 @@ go run ./cmd/main.go
 
 
 ```
-go run main.go
+go run ./cmd/main.go
+
+# 单文件课堂演示（不读 .env）
+# go run mvp.go
 
 # 生成短链接
 curl -X POST http://localhost:8080/api/shorten -d "url=https://golang.org"
 
-# 跳转链接
-curl -v http://localhost:8080/abc123
+# 跳转链接（换成上一步返回的短码）
+curl -v http://localhost:8080/<short_key>
 
 # 查看统计
-curl http://localhost:8080/api/stats/abc123
+curl http://localhost:8080/api/stats/<short_key>
 
 # 压测入口
-wrk -t4 -c100 -d10s http://localhost:8080/abc123
+wrk -t4 -c100 -d10s http://localhost:8080/<short_key>
 
-# pprof 查看 goroutine
-http://localhost:8080/debug/pprof/goroutine?debug=1
+# pprof 与 Prometheus 在本机 6060，不在对外的 8080
+http://127.0.0.1:6060/debug/pprof/goroutine?debug=1
+http://127.0.0.1:6060/metrics
 ```
 
 
