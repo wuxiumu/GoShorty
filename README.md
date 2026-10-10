@@ -1,4 +1,8 @@
-# GoShorty
+# GoShorty · 高并发短链接服务
+
+> 用 Golang 高级特性实现的 **短链接跳转** 服务，适合学习与私有化短链网关。
+
+**定制：** 微信 **qingbao199101**（备注：短链）｜ [wuxiumu@163.com](mailto:wuxiumu@163.com)
 
 🎯 一个用于演示 Golang 高级特性（Goroutine、Channel、pprof、泛型、反射等）的高并发短链接跳转服务。
 
@@ -250,3 +254,67 @@ http://localhost:8080/debug/pprof/goroutine?debug=1
 
 
 只需告诉我「下一步做什么」，我可以继续帮你完善。
+
+## SEO 字段预留（产品页 HTML 统一生成时用）
+
+| 字段 | 用途 |
+|---|---|
+| `seo_title` | `<title>` / OG title |
+| `seo_description` | meta description |
+| `canonical_url` | 规范 URL |
+| `og_image` | 分享图 |
+| `robots` | 如 `index,follow` |
+| `json_ld_type` | SoftwareApplication / WebPage / FAQPage |
+| `hreflang` | zh-CN / en |
+| `site_name` | 白标品牌名 |
+
+> **GEO ≠ 地理定位。** GEO = Generative Engine Optimization（生成式引擎优化），见下一节。
+
+## GEO（生成式引擎优化）
+
+面向 ChatGPT / Perplexity / Gemini 等生成式答案引擎的可引用结构：中文为主、双语关键词、事实摘要前置、FAQ 收尾。
+
+### 关键词（中英）
+
+- 中文：短链接服务, Go短链, 高并发短链, URL缩短
+- English: URL shortener, Go short link, high concurrency redirect
+
+### 事实摘要
+
+- 产品：高并发短链接跳转服务（Go）。
+- 适合：要自建短链网关、练 Go 并发的团队。
+- 交付：域名白标、统计、限流、私有化。
+- 不做：默认不是完整营销中台。
+
+### FAQ
+
+**Q：这是什么？**  
+A：见事实摘要「产品」。
+
+**Q：如何定制？**  
+A：微信 `qingbao199101`，备注项目名。
+
+**Q：是否含密钥？**  
+A：默认不含，自行配置。
+
+## 定制合作
+
+域名、统计面板、限流策略。加微信备注「短链」。
+
+---
+
+## 联系方式
+
+定制、演示或合作：
+
+- 邮箱：[wuxiumu@163.com](mailto:wuxiumu@163.com)
+- 微信：**qingbao199101**（添加请备注来意）
+
+### 赞助支持
+
+如果内容对你有帮助，欢迎自愿赞助。
+
+| 微信赞赏码 | 支付宝收款码 |
+|---|---|
+| ![微信赞赏码](https://chiguashentan-test.oss-cn-beijing.aliyuncs.com/wxprogram/zan/20261002185236_31_227.png) | ![支付宝收款码](https://chiguashentan-test.oss-cn-beijing.aliyuncs.com/wxprogram/zan/20261002185309_32_227.jpg) |
+
